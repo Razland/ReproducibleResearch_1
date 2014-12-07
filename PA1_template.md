@@ -7,10 +7,13 @@ _Conditionally (if not already present) download, unzip, and read-in data._
 
 ```r
 library(dplyr, warn.conflicts=FALSE)
-dataURL <- paste0("https://d396qusza40orc.cloudfront.",
-                  "net/repdata%2Fdata%2Factivity.zip")
-targFileName <- "data/repdata\ data\ activity.zip"
-dataFileName <- "data/activity.csv"
+library(knitr)
+dataURL <-                                  ## Download URL
+  paste0("https://d396qusza40orc.cloudfront.",  
+         "net/repdata%2Fdata%2Factivity.zip")
+targFileName <- paste0("data/repdata\ ",    ## Local data file name
+                       "data\ activity.zip")
+dataFileName <- "data/activity.csv"         ## Unzipped data file name
 
 if(!file.exists(dataFileName)) {            ## If not present, download file
   download.file(dataURL,                    ## from web and decompress 
@@ -30,7 +33,7 @@ rm(dataURL, targFileName, dataFileName)     ## Cleanup temp data objects
 
 ### What is mean total number of steps taken per day?
 
--Make a histogram of the total number of steps taken each day:  
+Make a histogram of the total number of steps taken each day:  
 
 ```r
 plot(                                       ## H-plot the total steps/day
@@ -46,20 +49,34 @@ plot(                                       ## H-plot the total steps/day
 
 ![plot of chunk meanStepsPlot](./PA1_template_files/figure-html/meanStepsPlot.png) 
 
--Calculate and report the mean and median total number of steps taken per day:
+```r
+dev.copy(png, file = "meanStepsPlot.png")   ## Save plot to separate file
+```
+
+```
+## png 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+Calculate and report the mean and median total number of steps taken per day:
 
 ```r
 print(
   paste(
     "Average Steps Per Day",
-    mean(                                       ## Computes the mean of the sums
-      na.omit(                                  ## for each day.  Omits NaN and
-        summarize(                              ## NA values.
-          group_by(
-            actDat, 
-            date), 
-          sum(steps, 
-              na.rm=TRUE)))$sum)))
+    mean(na.omit(summarize(group_by(actDat, ## Computes the mean of the sums
+                                    date),  ## for each day.  Omits NaN and
+                           sum(steps,       ## NA values.
+                               na.rm=TRUE)))$sum)))
 ```
 
 ```
@@ -67,42 +84,56 @@ print(
 ```
 
 ```r
-print(
-  paste(
-    "Median Steps Per Day",
-  median(                                     ## Computes the mid-point of the
-    na.omit(                                  ## sums for each day.  Omits NaN 
-      summarize(                              ## and NA values.
-        group_by(
-          actDat, 
-          date), 
-        sum(
-          steps, 
-          na.rm=TRUE)))$sum)))
+print(paste("Median Steps Per Day",
+            median(na.omit(                 ## Computes the mid-point of the
+                     summarize(             ## sums for each day.  Omits NaN 
+                       group_by(actDat,     ## and NA values.
+                                date), 
+                       sum(steps, 
+                           na.rm=TRUE)))$sum)))
 ```
 
 ```
 ## [1] "Median Steps Per Day 10395"
 ```
 
-### What is the average daily activity pattern?
--Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)  
+### What is the average daily activity pattern?  
+
+Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)  
+
 
 ```r
-plot(                                       ## L-plot the average steps/interval
-  na.omit(                                  ## Omits NaN and NA values
-    summarize(
-      group_by(
-        actDat, interval), 
-          mean(steps, na.rm=TRUE))), 
-  type="l",
-  ylab="Total Steps",
-  xlab="5-Minute Interval")
+plot(na.omit(summarize(group_by(            ## L-plot the average steps/interval
+                                actDat,     ## Omits NaN and NA values
+                                interval), 
+                       mean(steps, na.rm=TRUE))), 
+                       type="l",
+                       ylab="Total Steps",
+                       xlab="5-Minute Interval")
 ```
 
 ![plot of chunk plotStepsInterval](./PA1_template_files/figure-html/plotStepsInterval.png) 
 
--Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+```r
+dev.copy(png, file =                        ## Save plot to separate file
+           "plotStepsInterval.png")
+```
+
+```
+## png 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 
 ```r
@@ -125,10 +156,12 @@ print(paste0("Maximum activity is ",
 ```
 
 ```r
-rm(totals, maxStep, hour, minute)
+rm(totals, maxStep, hour, minute)           ## Explicit cleanup unused vars.
 ```
 ### Input missing values  
--Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs).  
+
+Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs).  
+
 
 ```r
 # note that there is no such thing as "imputting"
@@ -138,7 +171,7 @@ sum(as.numeric(is.na(actDat[,1])))
 ```
 ## [1] 2304
 ```
--Devise a strategy for filling in all of the missing values in the datase. Create 
+Devise a strategy for filling in all of the missing values in the datase. Create 
 a new dataset that is equal to the original dataset but with the missing data 
 filled in.  
 
@@ -147,7 +180,7 @@ words, many days have no observations for steps._
 
 
 ```r
-for(date in unique(actDat$date)){           ## code chunk demonstrates that NA
+for(date in unique(actDat$date)){           ## Code chunk demonstrates that NA
   print(                                    ## values for step observations are
     paste0(                                 ## covering entire days by not using
       mean(actDat[actDat$date==date, 1]),   ## na.omit with the mean function.
@@ -223,30 +256,29 @@ _A valid solution would be to discard records with no valid entries for the day.
 However, discarding the bad reading dates would not accomplish the instructions
 from the assignment:_   
 
-*"Create a new dataset that is equal to the original dataset but with the missing data filled in."*
+>"Create a new dataset that is equal to the original dataset but with the 
+>missing data filled in."  
 
 _The best compromise solution would be to replace observation step NA values 
 with 0 so as not to change the overall average:_  
 
 
 ```r
-naReplace <-function(steps){                ## Substitutes daily mean for NA
-  if(is.na(steps)){                         ## values. Returns a vector of 
-    return(0)                               ## steps.
+naReplace <-function(steps){                ## Substitutes 0 for NA values.
+  if(is.na(steps)){                         ## Returns a vector of steps.
+    return(0)
     }
   else{ 
     return(steps)
     }
   }
-
 newActDat <-                                ## Create a new data frame with the
-  data.frame(steps=as.numeric(              ## same sample labels.  Replace all
-                     lapply(                ## NA values with the mean of all
-                       actDat$steps,        ## days of data collections.
-                       naReplace)), 
-             date=actDat$date, 
-             interval=actDat$interval)
-dim(newActDat)                              ## show the size of the new data
+  data.frame(steps = as.numeric(            ## same sample labels.  Replace all
+                      lapply(               ## NA values with the mean of all
+                        actDat$steps,       ## days of data collections.
+                        naReplace)), 
+             date=actDat$date, interval=actDat$interval)
+dim(newActDat)                              ## Show the size of the new data
 ```
 
 ```
@@ -267,39 +299,51 @@ head(newActDat)                             ## Show a sample of the new data
 ## 6     0 2012-10-01       25
 ```
 
--Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the 
+Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the 
 impact of imputing _(sic)_ missing data on the estimates of the total daily 
-number of steps?
+number of steps?   
 
-_Histogram_  
+_Histogram below:_   
 
 
 ```r
-plot(                                       ## H-plot the total steps/day.
-  summarize(                                ## Omits NaN and NA values, same as
-    group_by(                               ## above.
-        newActDat, date), 
-          sum(steps)), 
+plot(summarize(group_by(newActDat,          ## H-plot the total steps/day.
+                        date),              ## Omits NaN and NA values, same as
+               sum(steps)),                 ## above.
   type="h",
   ylab="Total Steps",
   xlab="Date")
 ```
 
 ![plot of chunk corrDatHist](./PA1_template_files/figure-html/corrDatHist.png) 
+
+```r
+dev.copy(png, file = "corrDatHist.png")     ## Save plot to separate file
+```
+
+```
+## png 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
   
 _Mean and Median daily values_  
 
 
 ```r
-print(
-  paste(
-    "Average Steps Per Day",
-    mean(                                       ## Computes the mean of the sums
-      summarize(                                ## for each day.  Omits NaN and
-        group_by(                               ## NA values.
-            newActDat, 
-            date), 
-          sum(steps))$sum)))
+print(paste("Average Steps Per Day",
+            mean(summarize(group_by(        ## Computes and displays the mean of
+                             newActDat,     ## the sums for each day.  Omits NaN
+                              date),        ## and NA values.
+            sum(steps))$sum)))
 ```
 
 ```
@@ -307,15 +351,11 @@ print(
 ```
 
 ```r
-print(
-  paste(
-    "Median Steps Per Day",
-  median(                                     ## Computes the mid-point of the
-    summarize(                                ## sums for each day.  Omits NaN 
-      group_by(                               ## and NA values.
-          newActDat, 
-          date), 
-        sum(steps))$sum)))
+print(paste("Median Steps Per Day",
+            median(summarize(group_by(      ## Computes and displays the mid-
+                               newActDat,   ## point of the sums for each day.
+                               date),       ## Omits NaN and NA values.
+            sum(steps))$sum)))
 ```
 
 ```
@@ -328,7 +368,7 @@ the original data, since the original plot omitted NA values_
 
 ### Are there differences in activity patterns between weekdays and weekends?
 
--Create a new factor variable in the dataset with two levels – “weekday” and
+Create a new factor variable in the dataset with two levels – “weekday” and
 “weekend” indicating whether a given date is a weekday or weekend day.  
 
 
@@ -361,7 +401,7 @@ head(newActDat)
 ## 6     0 2012-10-01       25    TRUE
 ```
 
--Make a panel plot containing a time series plot (i.e. type = "l") of the 5-
+Make a panel plot containing a time series plot (i.e. type = "l") of the 5-
 minute interval (x-axis) and the average number of steps taken, averaged across 
 all weekday days or weekend days (y-axis).  
 
@@ -372,34 +412,28 @@ par(mfrow = c(2,1),                         ## Sets up multipanel plots and
     mar = c(.5,2,0,0),
     oma = c(1,1,0,0),
     lab = c(10, 6, 5))
-plot(                                       ## L-plot the average steps/interval
-  summarize(                                ## for weekdays. Omits NaN and NA
-    group_by(                               ## values. 
-      newActDat[newActDat$weekday==TRUE,], 
-      interval), 
-        mean(steps)), 
+plot(summarize(group_by(newActDat[          ## L-plot the average steps/interval
+                          newActDat$weekday==TRUE,],
+                        interval),          ## for weekdays. Omits NaN and NA
+               mean(steps)),                ## values.         
   type = "l",
   xaxt = "n",                               ## Omits x axis for the top graph
   ylim = c(0,210),
   xlim = c(0,2355),                         ## but sets x axis interval to match
   cex.axis = .7)
-text(1150, 210, "Weekday",                  ## Labels plot data
-     pos = 1, cex = .8)
+text(1150, 210, "Weekday",pos = 1, cex = .8)## Labels plot data
 par(mar = c(2,2,0,0))                       ## Modifies the margin for plot 2
-
-plot(                                       ## L-plot the average steps/interval
-  summarize(                                ## for weekend data. Omits NaN and
-    group_by(                               ## NA values.
-      newActDat[newActDat$weekday==FALSE,], 
-      interval), 
-        mean(steps)), 
+plot(summarize(group_by(                    ## L-plot the average steps/interval
+                        newActDat[newActDat$weekday==FALSE,],
+                        interval),          ## for weekend data. Omits NaN and
+               mean(steps)),                ## NA values.
   type="l",
   ylim = c(0,210),
   xlim = c(0,2355),
   cex.axis = .7 )
-text(1150, 210, "Weekend",                   ## Labels the plot
-     pos = 1, cex = .8)
-mtext("Number of Steps",                     ## Labels the shared axes
+text(1150, 210, "Weekend", pos = 1, 
+     cex = .8)                              ## Labels the plot
+mtext("Number of Steps",                    ## Labels the shared axes
       side = 2, 
       outer = TRUE)
 mtext("Interval", 
@@ -410,6 +444,24 @@ mtext("Interval",
 ![plot of chunk panelPlot](./PA1_template_files/figure-html/panelPlot.png) 
 
 ```r
-rm(newActDat)                                ## Cleanup temp data frame
+dev.copy(png, file = "panelPlot.png")       ## Save plot to separate file
+```
+
+```
+## png 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+```r
+rm(newActDat)                               ## Cleanup temp data frame
 ```
 ________________________________________________________________________________
