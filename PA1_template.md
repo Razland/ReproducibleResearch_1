@@ -163,14 +163,13 @@ print(paste0("Maximum activity is ",
 ```r
 rm(totals, maxStep, hour, minute)           ## Explicit cleanup unused vars.
 ```
-### Input missing values  
+### Impute missing values  
 
 Calculate and report the total number of missing values in the dataset (i.e. the 
 total number of rows with NAs).  
 
 
 ```r
-# note that there is no such thing as "imputting"
 sum(as.numeric(is.na(actDat[,1])))
 ```
 

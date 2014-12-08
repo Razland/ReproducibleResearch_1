@@ -161,11 +161,10 @@ print(paste0(&quot;Maximum activity is &quot;,
 <pre><code>## [1] &quot;Maximum activity is 10927 steps at 13:00.55&quot;</code></pre>
 <pre class="r"><code>rm(totals, maxStep, hour, minute)           ## Explicit cleanup unused vars.</code></pre>
 </div>
-<div id="input-missing-values" class="section level3">
-<h3>Input missing values</h3>
+<div id="impute-missing-values" class="section level3">
+<h3>Impute missing values</h3>
 <p>Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs).</p>
-<pre class="r"><code># note that there is no such thing as &quot;imputting&quot;
-sum(as.numeric(is.na(actDat[,1])))</code></pre>
+<pre class="r"><code>sum(as.numeric(is.na(actDat[,1])))</code></pre>
 <pre><code>## [1] 2304</code></pre>
 <p>Devise a strategy for filling in all of the missing values in the datase. Create a new dataset that is equal to the original dataset but with the missing data filled in.</p>
 <p><em>It is easily determined that NA values are clustered for entire days: in other words, many days have no observations for steps.</em></p>
