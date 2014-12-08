@@ -33,7 +33,7 @@ rm(dataURL, targFileName, dataFileName)     ## Cleanup temp data objects
 
 ### What is mean total number of steps taken per day?
 
-Make a histogram of the total number of steps taken each day:  
+    Make a histogram of the total number of steps taken each day:  
 
 ```r
 plot(                                       ## H-plot the total steps/day
@@ -67,24 +67,24 @@ dev.off()
 ##   2
 ```
 
-Calculate and report the mean and median total number of steps taken per day:
+    Calculate and report the mean and median total number of steps taken per day:
+    
 
 ```r
-print(
-  paste(
-    "Average Steps Per Day",
-    mean(na.omit(summarize(group_by(actDat, ## Computes the mean of the sums
-                                    date),  ## for each day.  Omits NaN and
-                           sum(steps,       ## NA values.
-                               na.rm=TRUE)))$sum)))
+print(paste("Average steps per day is",
+    formatC(mean(na.omit(
+      summarize(group_by(actDat,date),      ## Computes the mean of the sums
+                sum(steps,                  ## for each day.  Omits NaN and
+                    na.rm=TRUE)))$sum),     ## NA values. Formats to 6 digits.
+      digits=6)))                       
 ```
 
 ```
-## [1] "Average Steps Per Day 9354.22950819672"
+## [1] "Average steps per day is 9354.23"
 ```
 
 ```r
-print(paste("Median Steps Per Day",
+print(paste("Median steps per day is",
             median(na.omit(                 ## Computes the mid-point of the
                      summarize(             ## sums for each day.  Omits NaN 
                        group_by(actDat,     ## and NA values.
@@ -94,13 +94,13 @@ print(paste("Median Steps Per Day",
 ```
 
 ```
-## [1] "Median Steps Per Day 10395"
+## [1] "Median steps per day is 10395"
 ```
 
 ### What is the average daily activity pattern?  
 
-Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and 
-the average number of steps taken, averaged across all days (y-axis)  
+    Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis)
+    and the average number of steps taken, averaged across all days (y-axis)  
 
 
 ```r
@@ -134,8 +134,8 @@ dev.off()
 ##   2
 ```
 
-Which 5-minute interval, on average across all the days in the dataset, contains
-the maximum number of steps?
+    Which 5-minute interval, on average across all the days in the dataset, 
+    contains the maximum number of steps?
 
 
 ```r
@@ -149,24 +149,30 @@ hour <-                                     ## Hour component of timestamp for
   as.integer(maxStep$interval/60)           ## largest entry.
 minute <-                                   ## Minute component of timestamp for
   ((maxStep$interval/60 - hour)/100) *60    ## vector entry.
+second <- (minute - as.integer(minute))*60  ## Estimate peak seconds timestamp
 print(paste0("Maximum activity is ", 
-            maxStep$sum, " steps at ", 
+            maxStep$sum, 
+            " steps at interval ",
+            maxStep$interval, 
+            " or, occurs approximately at ",
             hour, ":",
-            formatC(minute, flag=0,         ## Format minutes.
-                    width=5)))
+            formatC(as.integer(minute),          ## Format minutes.
+                    flag=0, width=2),
+            ":", second,
+            " hours (24-hour clock)"))
 ```
 
 ```
-## [1] "Maximum activity is 10927 steps at 13:00.55"
+## [1] "Maximum activity is 10927 steps at interval 835 or, occurs approximately at 13:00:33 hours (24-hour clock)"
 ```
 
 ```r
-rm(totals, maxStep, hour, minute)           ## Explicit cleanup unused vars.
+rm(totals, maxStep, hour, minute, second)        ## Explicit cleanup unused vars.
 ```
 ### Impute missing values  
 
-Calculate and report the total number of missing values in the dataset (i.e. the 
-total number of rows with NAs).  
+    Calculate and report the total number of missing values in the dataset (i.e. 
+    the total number of rows with NAs).  
 
 
 ```r
@@ -176,12 +182,13 @@ sum(as.numeric(is.na(actDat[,1])))
 ```
 ## [1] 2304
 ```
-Devise a strategy for filling in all of the missing values in the datase. Create 
-a new dataset that is equal to the original dataset but with the missing data 
-filled in.  
+    Devise a strategy for filling in all of the missing values in the datase. 
+    Create a new dataset that is equal to the original dataset but with the 
+    missing data filled in.  
 
-_It is easily determined that NA values are clustered for entire days: in other
-words, many days have no observations for steps._   
+_Rationale: It is easily determined that NA values are clustered for entire 
+days: in other words, many days have no observations for steps, and do not
+contribute information to the data._   
 
 
 ```r
@@ -257,15 +264,15 @@ for(date in unique(actDat$date)){           ## Code chunk demonstrates that
 ## [1] "24.46875 15673"
 ## [1] "NA 15674"
 ```
-_A valid solution would be to discard records with no valid entries for the day.
-However, discarding the bad reading dates would not accomplish the instructions
-from the assignment:_   
+_Discussion: A valid solution would be to discard records with no valid entries 
+for the day.  However, discarding the bad reading dates would not accomplish the 
+instructions from the assignment:_   
 
-######"Create a new dataset that is equal to the original dataset but with the 
-###### missing data filled in."   
+######"Create a new dataset that is equal to the original dataset 
+but with the missing data filled in."   
 
-_The best compromise solution would be to replace observation step NA values 
-with 0 so as not to change the overall average:_  
+_Strategy: The best compromise solution seems to be to replace observation step 
+NA values with 0 so as not to change the information profile:_  
 
 
 ```r
@@ -304,11 +311,11 @@ head(newActDat)                             ## Show a sample of the new data
 ## 6     0 2012-10-01       25
 ```
 
-Make a histogram of the total number of steps taken each day and Calculate and 
-report the mean and median total number of steps taken per day. Do these values 
-differ from the estimates from the first part of the assignment? What is the 
-impact of imputing _(sic)_ missing data on the estimates of the total daily 
-number of steps?   
+    Make a histogram of the total number of steps taken each day and Calculate
+    and report the mean and median total number of steps taken per day. Do these
+    values differ from the estimates from the first part of the assignment? What
+    is the impact of imputing missing data on the estimates of the total daily
+    number of steps?   
 
 _Histogram below:_   
 
@@ -346,19 +353,20 @@ _Mean and Median daily values_
 
 
 ```r
-print(paste("Average Steps Per Day",
-            mean(summarize(group_by(        ## Computes and displays the mean of
-                             newActDat,     ## the sums for each day.  Omits NaN
-                              date),        ## and NA values.
-            sum(steps))$sum)))
+print(paste("Average steps per day is",
+    formatC(mean(na.omit(
+      summarize(group_by(actDat,date),      ## Computes the mean of the sums
+                sum(steps,                  ## for each day.  Omits NaN and
+                    na.rm=TRUE)))$sum),     ## NA values. Formats to 6 digits.
+      digits=6)))                       
 ```
 
 ```
-## [1] "Average Steps Per Day 9354.22950819672"
+## [1] "Average steps per day is 9354.23"
 ```
 
 ```r
-print(paste("Median Steps Per Day",
+print(paste("Median steps per day is",
             median(summarize(group_by(      ## Computes and displays the mid-
                                newActDat,   ## point of the sums for each day.
                                date),       ## Omits NaN and NA values.
@@ -366,17 +374,17 @@ print(paste("Median Steps Per Day",
 ```
 
 ```
-## [1] "Median Steps Per Day 10395"
+## [1] "Median steps per day is 10395"
 ```
 
 _Since the NA data were replaced with zero, the daily sums for the affected days 
 have not changed.  The most recent histogram shows the same values as that of 
-the original data, since the original plot omitted NA values_  
+the original data, which has the same effect as ommitting NA values in the formulae generating the original plot._  
 
 ### Are there differences in activity patterns between weekdays and weekends?
 
-Create a new factor variable in the dataset with two levels – “weekday” and
-“weekend” indicating whether a given date is a weekday or weekend day.  
+    Create a new factor variable in the dataset with two levels – “weekday” and
+    “weekend” indicating whether a given date is a weekday or weekend day.  
 
 
 ```r
@@ -387,7 +395,7 @@ newActDat <-
                             lapply(         ## "S" and ending in "day."
                               newActDat$date, 
                               weekdays))))
-dim(newActDat)
+dim(newActDat)                              ## Show the size of the new data.
 ```
 
 ```
@@ -395,7 +403,7 @@ dim(newActDat)
 ```
 
 ```r
-head(newActDat)
+head(newActDat)                             ## Display a sample of the new data.
 ```
 
 ```
@@ -408,9 +416,9 @@ head(newActDat)
 ## 6     0 2012-10-01       25    TRUE
 ```
 
-Make a panel plot containing a time series plot (i.e. type = "l") of the 5-
-minute interval (x-axis) and the average number of steps taken, averaged across 
-all weekday days or weekend days (y-axis).  
+    Make a panel plot containing a time series plot (i.e. type = "l") of the 5-
+    minute interval (x-axis) and the average number of steps taken, averaged
+    across all weekday days or weekend days (y-axis).  
 
 
 ```r
@@ -468,6 +476,6 @@ dev.off()
 ```
 
 ```r
-rm(newActDat)                               ## Cleanup temp data frame
+rm(newActDat)                               ## Explicit cleanup temp data frame
 ```
 ________________________________________________________________________________

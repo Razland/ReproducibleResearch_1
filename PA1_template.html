@@ -85,7 +85,7 @@ rm(dataURL, targFileName, dataFileName)     ## Cleanup temp data objects</code><
 </div>
 <div id="what-is-mean-total-number-of-steps-taken-per-day" class="section level3">
 <h3>What is mean total number of steps taken per day?</h3>
-<p>Make a histogram of the total number of steps taken each day:</p>
+<pre><code>Make a histogram of the total number of steps taken each day:  </code></pre>
 <pre class="r"><code>plot(                                       ## H-plot the total steps/day
   na.omit(                                  ## Omits NaN and NA values
     summarize(
@@ -104,27 +104,27 @@ rm(dataURL, targFileName, dataFileName)     ## Cleanup temp data objects</code><
 <pre class="r"><code>dev.off()</code></pre>
 <pre><code>## pdf 
 ##   2</code></pre>
-<p>Calculate and report the mean and median total number of steps taken per day:</p>
-<pre class="r"><code>print(
-  paste(
-    &quot;Average Steps Per Day&quot;,
-    mean(na.omit(summarize(group_by(actDat, ## Computes the mean of the sums
-                                    date),  ## for each day.  Omits NaN and
-                           sum(steps,       ## NA values.
-                               na.rm=TRUE)))$sum)))</code></pre>
-<pre><code>## [1] &quot;Average Steps Per Day 9354.22950819672&quot;</code></pre>
-<pre class="r"><code>print(paste(&quot;Median Steps Per Day&quot;,
+<pre><code>Calculate and report the mean and median total number of steps taken per day:</code></pre>
+<pre class="r"><code>print(paste(&quot;Average steps per day is&quot;,
+    formatC(mean(na.omit(
+      summarize(group_by(actDat,date),      ## Computes the mean of the sums
+                sum(steps,                  ## for each day.  Omits NaN and
+                    na.rm=TRUE)))$sum),     ## NA values. Formats to 6 digits.
+      digits=6)))                       </code></pre>
+<pre><code>## [1] &quot;Average steps per day is 9354.23&quot;</code></pre>
+<pre class="r"><code>print(paste(&quot;Median steps per day is&quot;,
             median(na.omit(                 ## Computes the mid-point of the
                      summarize(             ## sums for each day.  Omits NaN 
                        group_by(actDat,     ## and NA values.
                                 date), 
                        sum(steps, 
                            na.rm=TRUE)))$sum)))</code></pre>
-<pre><code>## [1] &quot;Median Steps Per Day 10395&quot;</code></pre>
+<pre><code>## [1] &quot;Median steps per day is 10395&quot;</code></pre>
 </div>
 <div id="what-is-the-average-daily-activity-pattern" class="section level3">
 <h3>What is the average daily activity pattern?</h3>
-<p>Make a time series plot (i.e. type = “l”) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)</p>
+<pre><code>Make a time series plot (i.e. type = &quot;l&quot;) of the 5-minute interval (x-axis)
+and the average number of steps taken, averaged across all days (y-axis)  </code></pre>
 <pre class="r"><code>plot(na.omit(summarize(group_by(            ## L-plot the average steps/interval
                                 actDat,     ## Omits NaN and NA values
                                 interval), 
@@ -142,7 +142,8 @@ rm(dataURL, targFileName, dataFileName)     ## Cleanup temp data objects</code><
 <pre class="r"><code>dev.off()</code></pre>
 <pre><code>## pdf 
 ##   2</code></pre>
-<p>Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?</p>
+<pre><code>Which 5-minute interval, on average across all the days in the dataset, 
+contains the maximum number of steps?</code></pre>
 <pre class="r"><code>totals &lt;-                                   ## Vector of interval sums
   summarize(
             group_by(actDat, interval), 
@@ -153,21 +154,30 @@ hour &lt;-                                     ## Hour component of timestamp fo
   as.integer(maxStep$interval/60)           ## largest entry.
 minute &lt;-                                   ## Minute component of timestamp for
   ((maxStep$interval/60 - hour)/100) *60    ## vector entry.
+second &lt;- (minute - as.integer(minute))*60  ## Estimate peak seconds timestamp
 print(paste0(&quot;Maximum activity is &quot;, 
-            maxStep$sum, &quot; steps at &quot;, 
+            maxStep$sum, 
+            &quot; steps at interval &quot;,
+            maxStep$interval, 
+            &quot; or, occurs approximately at &quot;,
             hour, &quot;:&quot;,
-            formatC(minute, flag=0,         ## Format minutes.
-                    width=5)))</code></pre>
-<pre><code>## [1] &quot;Maximum activity is 10927 steps at 13:00.55&quot;</code></pre>
-<pre class="r"><code>rm(totals, maxStep, hour, minute)           ## Explicit cleanup unused vars.</code></pre>
+            formatC(as.integer(minute),          ## Format minutes.
+                    flag=0, width=2),
+            &quot;:&quot;, second,
+            &quot; hours (24-hour clock)&quot;))</code></pre>
+<pre><code>## [1] &quot;Maximum activity is 10927 steps at interval 835 or, occurs approximately at 13:00:33 hours (24-hour clock)&quot;</code></pre>
+<pre class="r"><code>rm(totals, maxStep, hour, minute, second)        ## Explicit cleanup unused vars.</code></pre>
 </div>
 <div id="impute-missing-values" class="section level3">
 <h3>Impute missing values</h3>
-<p>Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs).</p>
+<pre><code>Calculate and report the total number of missing values in the dataset (i.e. 
+the total number of rows with NAs).  </code></pre>
 <pre class="r"><code>sum(as.numeric(is.na(actDat[,1])))</code></pre>
 <pre><code>## [1] 2304</code></pre>
-<p>Devise a strategy for filling in all of the missing values in the datase. Create a new dataset that is equal to the original dataset but with the missing data filled in.</p>
-<p><em>It is easily determined that NA values are clustered for entire days: in other words, many days have no observations for steps.</em></p>
+<pre><code>Devise a strategy for filling in all of the missing values in the datase. 
+Create a new dataset that is equal to the original dataset but with the 
+missing data filled in.  </code></pre>
+<p><em>Rationale: It is easily determined that NA values are clustered for entire days: in other words, many days have no observations for steps, and do not contribute information to the data.</em></p>
 <pre class="r"><code>for(date in unique(actDat$date)){           ## Code chunk demonstrates that
   print(                                    ## values for step observations are
     paste0(                                 ## sometimes NA for full days by not
@@ -236,10 +246,10 @@ print(paste0(&quot;Maximum activity is &quot;,
 ## [1] &quot;35.3576388888889 15672&quot;
 ## [1] &quot;24.46875 15673&quot;
 ## [1] &quot;NA 15674&quot;</code></pre>
-<p><em>A valid solution would be to discard records with no valid entries for the day. However, discarding the bad reading dates would not accomplish the instructions from the assignment:</em></p>
+<p><em>Discussion: A valid solution would be to discard records with no valid entries for the day. However, discarding the bad reading dates would not accomplish the instructions from the assignment:</em></p>
 <div id="create-a-new-dataset-that-is-equal-to-the-original-dataset-but-with-the-missing-data-filled-in." class="section level6">
-<h6>“Create a new dataset that is equal to the original dataset but with the ###### missing data filled in.”</h6>
-<p><em>The best compromise solution would be to replace observation step NA values with 0 so as not to change the overall average:</em></p>
+<h6>“Create a new dataset that is equal to the original dataset but with the missing data filled in.”</h6>
+<p><em>Strategy: The best compromise solution seems to be to replace observation step NA values with 0 so as not to change the information profile:</em></p>
 <pre class="r"><code>naReplace &lt;-function(steps){                ## Substitutes 0 for NA values.
   if(is.na(steps)){                         ## Returns a vector of steps.
     return(0)
@@ -264,7 +274,11 @@ dim(newActDat)                              ## Show the size of the new data</co
 ## 4     0 2012-10-01       15
 ## 5     0 2012-10-01       20
 ## 6     0 2012-10-01       25</code></pre>
-<p>Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing <em>(sic)</em> missing data on the estimates of the total daily number of steps?</p>
+<pre><code>Make a histogram of the total number of steps taken each day and Calculate
+and report the mean and median total number of steps taken per day. Do these
+values differ from the estimates from the first part of the assignment? What
+is the impact of imputing missing data on the estimates of the total daily
+number of steps?   </code></pre>
 <p><em>Histogram below:</em></p>
 <pre class="r"><code>plot(summarize(group_by(newActDat,          ## H-plot the total steps/day.
                         date),              ## Omits NaN and NA values, same as
@@ -282,24 +296,26 @@ dim(newActDat)                              ## Show the size of the new data</co
 <pre><code>## pdf 
 ##   2</code></pre>
 <p><em>Mean and Median daily values</em></p>
-<pre class="r"><code>print(paste(&quot;Average Steps Per Day&quot;,
-            mean(summarize(group_by(        ## Computes and displays the mean of
-                             newActDat,     ## the sums for each day.  Omits NaN
-                              date),        ## and NA values.
-            sum(steps))$sum)))</code></pre>
-<pre><code>## [1] &quot;Average Steps Per Day 9354.22950819672&quot;</code></pre>
-<pre class="r"><code>print(paste(&quot;Median Steps Per Day&quot;,
+<pre class="r"><code>print(paste(&quot;Average steps per day is&quot;,
+    formatC(mean(na.omit(
+      summarize(group_by(actDat,date),      ## Computes the mean of the sums
+                sum(steps,                  ## for each day.  Omits NaN and
+                    na.rm=TRUE)))$sum),     ## NA values. Formats to 6 digits.
+      digits=6)))                       </code></pre>
+<pre><code>## [1] &quot;Average steps per day is 9354.23&quot;</code></pre>
+<pre class="r"><code>print(paste(&quot;Median steps per day is&quot;,
             median(summarize(group_by(      ## Computes and displays the mid-
                                newActDat,   ## point of the sums for each day.
                                date),       ## Omits NaN and NA values.
             sum(steps))$sum)))</code></pre>
-<pre><code>## [1] &quot;Median Steps Per Day 10395&quot;</code></pre>
-<p><em>Since the NA data were replaced with zero, the daily sums for the affected days have not changed. The most recent histogram shows the same values as that of the original data, since the original plot omitted NA values</em></p>
+<pre><code>## [1] &quot;Median steps per day is 10395&quot;</code></pre>
+<p><em>Since the NA data were replaced with zero, the daily sums for the affected days have not changed. The most recent histogram shows the same values as that of the original data, which has the same effect as ommitting NA values in the formulae generating the original plot.</em></p>
 </div>
 </div>
 <div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level3">
 <h3>Are there differences in activity patterns between weekdays and weekends?</h3>
-<p>Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.</p>
+<pre><code>Create a new factor variable in the dataset with two levels – “weekday” and
+“weekend” indicating whether a given date is a weekday or weekend day.  </code></pre>
 <pre class="r"><code>newActDat &lt;- 
   mutate(newActDat,                         ## Adds new variable for weekday 
          weekday = !grepl(&quot;S[a-z]*day&quot;,     ## as a boolean. Uses regexp to 
@@ -307,9 +323,9 @@ dim(newActDat)                              ## Show the size of the new data</co
                             lapply(         ## &quot;S&quot; and ending in &quot;day.&quot;
                               newActDat$date, 
                               weekdays))))
-dim(newActDat)</code></pre>
+dim(newActDat)                              ## Show the size of the new data.</code></pre>
 <pre><code>## [1] 17568     4</code></pre>
-<pre class="r"><code>head(newActDat)</code></pre>
+<pre class="r"><code>head(newActDat)                             ## Display a sample of the new data.</code></pre>
 <pre><code>##   steps       date interval weekday
 ## 1     0 2012-10-01        0    TRUE
 ## 2     0 2012-10-01        5    TRUE
@@ -317,7 +333,9 @@ dim(newActDat)</code></pre>
 ## 4     0 2012-10-01       15    TRUE
 ## 5     0 2012-10-01       20    TRUE
 ## 6     0 2012-10-01       25    TRUE</code></pre>
-<p>Make a panel plot containing a time series plot (i.e. type = “l”) of the 5- minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).</p>
+<pre><code>Make a panel plot containing a time series plot (i.e. type = &quot;l&quot;) of the 5-
+minute interval (x-axis) and the average number of steps taken, averaged
+across all weekday days or weekend days (y-axis).  </code></pre>
 <pre class="r"><code>par(mfrow = c(2,1),                         ## Sets up multipanel plots and 
     pin = c(10, 10),                        ## other aesthetics.
     mar = c(.5,2,0,0),
@@ -358,7 +376,7 @@ mtext(&quot;Interval&quot;,
 <pre class="r"><code>dev.off()</code></pre>
 <pre><code>## pdf 
 ##   2</code></pre>
-<pre class="r"><code>rm(newActDat)                               ## Cleanup temp data frame</code></pre>
+<pre class="r"><code>rm(newActDat)                               ## Explicit cleanup temp data frame</code></pre>
 <hr />
 </div>
 </div>
