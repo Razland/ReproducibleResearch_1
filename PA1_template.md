@@ -99,7 +99,8 @@ print(paste("Median Steps Per Day",
 
 ### What is the average daily activity pattern?  
 
-Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)  
+Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and 
+the average number of steps taken, averaged across all days (y-axis)  
 
 
 ```r
@@ -133,26 +134,30 @@ dev.off()
 ##   2
 ```
 
-Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+Which 5-minute interval, on average across all the days in the dataset, contains
+the maximum number of steps?
 
 
 ```r
-totals <- summarize(
+totals <-                                   ## Vector of interval sums
+  summarize(
             group_by(actDat, interval), 
             sum(steps, na.rm=TRUE))
-maxStep <- totals[totals$sum == max(totals$sum), c(1,2)]
-hour <- as.integer(maxStep$interval/60)
-minute <- ((maxStep$interval/60 - hour)/100) *60
+maxStep <-                                  ## Largest of vector.
+  totals[totals$sum == max(totals$sum), c(1,2)]
+hour <-                                     ## Hour component of timestamp for
+  as.integer(maxStep$interval/60)           ## largest entry.
+minute <-                                   ## Minute component of timestamp for
+  ((maxStep$interval/60 - hour)/100) *60    ## vector entry.
 print(paste0("Maximum activity is ", 
-            maxStep$sum,
-            " steps at ", 
-            hour,
-            ":",
-            minute))
+            maxStep$sum, " steps at ", 
+            hour, ":",
+            formatC(minute, flag=0,         ## Format minutes.
+                    width=5)))
 ```
 
 ```
-## [1] "Maximum activity is 10927 steps at 13:0.55"
+## [1] "Maximum activity is 10927 steps at 13:00.55"
 ```
 
 ```r
@@ -160,7 +165,8 @@ rm(totals, maxStep, hour, minute)           ## Explicit cleanup unused vars.
 ```
 ### Input missing values  
 
-Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs).  
+Calculate and report the total number of missing values in the dataset (i.e. the 
+total number of rows with NAs).  
 
 
 ```r
@@ -180,13 +186,13 @@ words, many days have no observations for steps._
 
 
 ```r
-for(date in unique(actDat$date)){           ## Code chunk demonstrates that NA
+for(date in unique(actDat$date)){           ## Code chunk demonstrates that
   print(                                    ## values for step observations are
-    paste0(                                 ## covering entire days by not using
-      mean(actDat[actDat$date==date, 1]),   ## na.omit with the mean function.
-           " ",                             ## Computes the step mean for each
-           date))                           ## day of collections. Displays mean
-  }                                         ## and POSIX unformatted day.
+    paste0(                                 ## sometimes NA for full days by not
+         mean(actDat[actDat$date==date, 1]),## using mean(na.omit). Computes the
+         " ",                               ## step mean for each day of 
+         date))                             ## collections. Displays mean with
+  }                                         ## the POSIX unformatted date.
 ```
 
 ```
@@ -256,8 +262,8 @@ _A valid solution would be to discard records with no valid entries for the day.
 However, discarding the bad reading dates would not accomplish the instructions
 from the assignment:_   
 
->"Create a new dataset that is equal to the original dataset but with the 
->missing data filled in."  
+######"Create a new dataset that is equal to the original dataset but with the 
+missing data filled in."  ######    
 
 _The best compromise solution would be to replace observation step NA values 
 with 0 so as not to change the overall average:_  
@@ -299,7 +305,9 @@ head(newActDat)                             ## Show a sample of the new data
 ## 6     0 2012-10-01       25
 ```
 
-Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the 
+Make a histogram of the total number of steps taken each day and Calculate and 
+report the mean and median total number of steps taken per day. Do these values 
+differ from the estimates from the first part of the assignment? What is the 
 impact of imputing _(sic)_ missing data on the estimates of the total daily 
 number of steps?   
 
@@ -423,22 +431,21 @@ plot(summarize(group_by(newActDat[          ## L-plot the average steps/interval
   cex.axis = .7)
 text(1150, 210, "Weekday",pos = 1, cex = .8)## Labels plot data
 par(mar = c(2,2,0,0))                       ## Modifies the margin for plot 2
-plot(summarize(group_by(                    ## L-plot the average steps/interval
-                        newActDat[newActDat$weekday==FALSE,],
-                        interval),          ## for weekend data. Omits NaN and
+plot(summarize(                             ## L-plot the average steps/interval
+       group_by(
+         newActDat[newActDat$weekday==FALSE,],
+         interval),                         ## for weekend data. Omits NaN and
                mean(steps)),                ## NA values.
   type="l",
   ylim = c(0,210),
   xlim = c(0,2355),
   cex.axis = .7 )
-text(1150, 210, "Weekend", pos = 1, 
-     cex = .8)                              ## Labels the plot
+text(1150, 210, "Weekend", pos = 1,         ## Labels the plot 
+     cex = .8)                     
 mtext("Number of Steps",                    ## Labels the shared axes
-      side = 2, 
-      outer = TRUE)
+      side = 2, outer = TRUE)
 mtext("Interval", 
-      side = 1, 
-      outer = TRUE)
+      side = 1, outer = TRUE)
 ```
 
 ![plot of chunk panelPlot](./PA1_template_files/figure-html/panelPlot.png) 
