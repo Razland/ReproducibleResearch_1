@@ -239,7 +239,7 @@ sum(as.numeric(is.na(actDat[,1])))</code></pre>
 ## [1] &quot;NA 15674&quot;</code></pre>
 <p><em>A valid solution would be to discard records with no valid entries for the day. However, discarding the bad reading dates would not accomplish the instructions from the assignment:</em></p>
 <div id="create-a-new-dataset-that-is-equal-to-the-original-dataset-but-with-the-missing-data-filled-in." class="section level6">
-<h6>“Create a new dataset that is equal to the original dataset but with the missing data filled in.”</h6>
+<h6>“Create a new dataset that is equal to the original dataset but with the ###### missing data filled in.”</h6>
 <p><em>The best compromise solution would be to replace observation step NA values with 0 so as not to change the overall average:</em></p>
 <pre class="r"><code>naReplace &lt;-function(steps){                ## Substitutes 0 for NA values.
   if(is.na(steps)){                         ## Returns a vector of steps.

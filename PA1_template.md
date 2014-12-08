@@ -263,7 +263,7 @@ However, discarding the bad reading dates would not accomplish the instructions
 from the assignment:_   
 
 ######"Create a new dataset that is equal to the original dataset but with the 
-missing data filled in."  ######    
+###### missing data filled in."   
 
 _The best compromise solution would be to replace observation step NA values 
 with 0 so as not to change the overall average:_  
