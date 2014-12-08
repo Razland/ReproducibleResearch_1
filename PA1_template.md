@@ -268,8 +268,8 @@ _Discussion: A valid solution would be to discard records with no valid entries
 for the day.  However, discarding the bad reading dates would not accomplish the 
 instructions from the assignment:_   
 
-######"Create a new dataset that is equal to the original dataset 
-but with the missing data filled in."   
+######"Create a new dataset that is equal to the original dataset but with the missing data filled in."   
+
 
 _Strategy: The best compromise solution seems to be to replace observation step 
 NA values with 0 so as not to change the information profile:_  
