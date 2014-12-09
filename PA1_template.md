@@ -50,21 +50,8 @@ plot(                                       ## H-plot the total steps/day
 ![plot of chunk meanStepsPlot](./PA1_template_files/figure-html/meanStepsPlot.png) 
 
 ```r
-dev.copy(png, file = "meanStepsPlot.png")   ## Save plot to separate file
-```
-
-```
-## png 
-##   3
-```
-
-```r
-dev.off()
-```
-
-```
-## pdf 
-##   2
+#dev.copy(png, file = "meanStepsPlot.png")   ## Save plot to separate file
+#dev.off()
 ```
 
     Calculate and report the mean and median total number of steps taken per day:
@@ -116,22 +103,9 @@ plot(na.omit(summarize(group_by(            ## L-plot the average steps/interval
 ![plot of chunk plotStepsInterval](./PA1_template_files/figure-html/plotStepsInterval.png) 
 
 ```r
-dev.copy(png, file =                        ## Save plot to separate file
-           "plotStepsInterval.png")
-```
-
-```
-## png 
-##   3
-```
-
-```r
-dev.off()
-```
-
-```
-## pdf 
-##   2
+#dev.copy(png, file =                        ## Save plot to separate file
+#           "plotStepsInterval.png")
+#dev.off()
 ```
 
     Which 5-minute interval, on average across all the days in the dataset, 
@@ -332,21 +306,8 @@ plot(summarize(group_by(newActDat,          ## H-plot the total steps/day.
 ![plot of chunk corrDatHist](./PA1_template_files/figure-html/corrDatHist.png) 
 
 ```r
-dev.copy(png, file = "corrDatHist.png")     ## Save plot to separate file
-```
-
-```
-## png 
-##   3
-```
-
-```r
-dev.off()
-```
-
-```
-## pdf 
-##   2
+#dev.copy(png, file = "corrDatHist.png")     ## Save plot to separate file
+#dev.off()
 ```
   
 _Mean and Median daily values_  
@@ -458,24 +419,8 @@ mtext("Interval",
 ![plot of chunk panelPlot](./PA1_template_files/figure-html/panelPlot.png) 
 
 ```r
-dev.copy(png, file = "panelPlot.png")       ## Save plot to separate file
-```
-
-```
-## png 
-##   3
-```
-
-```r
-dev.off()
-```
-
-```
-## pdf 
-##   2
-```
-
-```r
+#dev.copy(png, file = "panelPlot.png")       ## Save plot to separate file
+#dev.off()
 rm(newActDat)                               ## Explicit cleanup temp data frame
 ```
 ________________________________________________________________________________

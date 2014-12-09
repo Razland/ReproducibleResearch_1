@@ -49,8 +49,8 @@ plot(                                       ## H-plot the total steps/day
   type="h",
   ylab="Total Steps",
   xlab="Date")
-dev.copy(png, file = "meanStepsPlot.png")   ## Save plot to separate file
-dev.off()
+#dev.copy(png, file = "meanStepsPlot.png")   ## Save plot to separate file
+#dev.off()
 ```
 
     Calculate and report the mean and median total number of steps taken per day:
@@ -84,9 +84,9 @@ plot(na.omit(summarize(group_by(            ## L-plot the average steps/interval
                        type="l",
                        ylab="Total Steps",
                        xlab="5-Minute Interval")
-dev.copy(png, file =                        ## Save plot to separate file
-           "plotStepsInterval.png")
-dev.off()
+#dev.copy(png, file =                        ## Save plot to separate file
+#           "plotStepsInterval.png")
+#dev.off()
 ```  
 
     Which 5-minute interval, on average across all the days in the dataset, 
@@ -185,8 +185,8 @@ plot(summarize(group_by(newActDat,          ## H-plot the total steps/day.
   type="h",
   ylab="Total Steps",
   xlab="Date")
-dev.copy(png, file = "corrDatHist.png")     ## Save plot to separate file
-dev.off()
+#dev.copy(png, file = "corrDatHist.png")     ## Save plot to separate file
+#dev.off()
 ```  
   
 _Mean and Median daily values_  
@@ -262,8 +262,8 @@ mtext("Number of Steps",                    ## Labels the shared axes
       side = 2, outer = TRUE)
 mtext("Interval", 
       side = 1, outer = TRUE)
-dev.copy(png, file = "panelPlot.png")       ## Save plot to separate file
-dev.off()
+#dev.copy(png, file = "panelPlot.png")       ## Save plot to separate file
+#dev.off()
 rm(newActDat)                               ## Explicit cleanup temp data frame
 ```  
 ________________________________________________________________________________
